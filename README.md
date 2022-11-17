@@ -32,6 +32,7 @@ Although the application is not exposing sensitive data, its secured with basic 
 Response :
 
 JSON Structure:
+<img width="364" alt="Screenshot 2022-11-17 at 11 10 15 PM" src="https://user-images.githubusercontent.com/78738348/202570829-13d1f738-f9f6-4196-8eba-e2cd9f141f3d.png">
 
 {
     "todays_weather": {
