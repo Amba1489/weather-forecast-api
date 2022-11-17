@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd ">
+    <apikit:config name="weather-forecast-config" api="weather-forecast.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <flow name="weather-forecast-main" doc:id="708ca0da-4d12-45d6-b3bb-b3e516e8f650">
+        <http:listener config-ref="HTTP_Listener_config" path="/api/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="weather-forecast-config" doc:id="2c71c2cb-6263-4ba3-aade-f9ea50ee77e3"/>
+        <error-handler>
+            <on-error-propagate type="APIKIT:BAD_REQUEST">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: "Bad request",
+	error_description: error.description
+	
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[400]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: "Resource not found",
+	error_description: error.description
+	
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[404]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: "Method not allowed",
+	error_description: error.description
+	
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[405]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: "Not acceptable",
+	error_description: error.description
+	
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[406]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: "Unsupported media type",
+	error_description: error.description
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[415]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: "Not Implemented",
+	error_description: error.description
+	
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[501]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="get:\weather:weather-forecast-config">
+		<logger level="INFO" doc:name="Start flow" doc:id="4eca7e45-af1f-4daa-8317-eaaa223b2efc" message="Received the request to fetch weather"/>
+		<set-variable value='#[lower(attributes.queryParams.mode)=="html"]' doc:name="Set Mode" doc:id="f3e0542a-9426-4703-8800-19f787a29664" variableName="Mode" />
+		<scatter-gather doc:name="Scatter-Gather for weather &amp; forecast" doc:id="b3d9f2c5-6bf7-4bfe-bc50-b7feee898608" >
+			<route >
+				<http:request method="GET" doc:name="Fetch forecasted weather" doc:id="81a3d8fb-d913-4aff-bfe9-2879cc0515c7" config-ref="HTTP_Request_configuration" path="${api.path}">
+			<http:query-params><![CDATA[#[output application/java
+---
+{
+	"appid" : p("api.id"),
+	("lat" : attributes.queryParams.latitude) if(attributes.queryParams.latitude?),
+	("lon" : attributes.queryParams.longitude) if(attributes.queryParams.longitude?),
+	("q" : attributes.queryParams.q) if(attributes.queryParams.q?),
+	"units":p('api.unit')
+}]]]></http:query-params>
+		</http:request>
+			</route>
+			<route >
+				<http:request method="GET" doc:name="Fetch Todays weather" doc:id="df2b6780-8e74-400d-a7c5-80aba8f973c8" config-ref="HTTP_Request_configuration" path="${api2.path}">
+			<http:query-params><![CDATA[#[output application/java
+---
+{
+	"appid" : p('api.id'),
+	("lat" : attributes.queryParams.latitude) if(attributes.queryParams.latitude?),
+	("lon" : attributes.queryParams.longitude) if(attributes.queryParams.longitude?),
+	("q" : attributes.queryParams.q) if(attributes.queryParams.q?),
+	"units":p('api.unit')
+}]]]></http:query-params>
+		</http:request>
+			</route>
+		</scatter-gather>
+		<choice doc:name="Mode Html/Json ?" doc:id="cf17905a-6838-46ed-9ef6-ea8ce053d253">
+			<when expression="#[vars.Mode]">
+				<parse-template doc:name="Convert to Html" doc:id="adb0398a-dae0-4798-b10a-b0ee2a083075" outputMimeType="text/html" location="weather-forcast.html">
+		</parse-template>
+			</when>
+			<otherwise>
+				<ee:transform doc:name="Convert to Json" doc:id="e32941e3-0786-43df-9ce4-90af54995885">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{"todays_weather":{
+	"city_name": payload[1].typedValue.name,
+	"country": payload[1].typedValue.sys.country,
+	"geo_latitude": payload[1].typedValue.coord.lat,
+	"geo_longitude": payload[1].typedValue.coord.lon,
+	"date" : (payload[1].typedValue.dt as DateTime) as String {format: 'yyyy-MM-dd'},
+	"weather": payload[1].typedValue.weather[0].main,
+	"weather_desc":payload[1].typedValue.weather[0].description,
+	"temperature_c" : payload[1].typedValue.main.temp,
+	"feels_like_c" : payload[1].typedValue.main.feels_like,
+	"temperature_minimum_c":payload[1].typedValue.main.temp_min,
+	"temperature_maximum_c":payload[1].typedValue.main.temp_max,
+	"sunrise":(payload[1].typedValue.sys.sunrise as DateTime) as String {format: 'hh:mm:ss'},
+	"sunset":(payload[1].typedValue.sys.sunset as DateTime) as String {format: 'hh:mm:ss'},
+	"timezone":(payload[1].typedValue.timezone/3600) as String {format:"00.00"},
+	"atmospheric_pressure" : payload[1].typedValue.main.pressure,
+	"humidity_%": payload[1].typedValue.main.humidity,
+	"visibility":payload[1].typedValue.visibility,
+	"wind_mps": payload[1].typedValue.wind.speed,
+	"wind_dir": payload[1].typedValue.wind.deg,
+	"clouds_hpa": payload[1].typedValue.clouds.all,
+	"rain": payload[1].typedValue.rain.'3h' default "Nil",
+	"Snow": payload[1].typedValue.snow default "Nil"
+	},
+	"Weather_forcast":payload[0].typedValue.list map {
+	"date" : ($.dt as DateTime) as String {format: 'yyyy-MM-ddhh:mm'},
+	"weather": $.weather[0].main, 
+	"weather_desc": $.weather[0].description,
+	"temperature_c" : $.main.temp,
+	"feels_like_c" : $.main.feels_like,
+	"temperature_minimum_c":$.main.temp_min,
+	"temperature_maximum_c":$.main.temp_max,
+	"atmospheric_pressure" : $.main.pressure,
+	"humidity_%": $.main.humidity,
+	"visibility":$.visibility,
+	"wind_mps": $.wind.speed,
+	"wind_dir": $.wind.deg,
+	"clouds_hpa": $.clouds.all,
+	"rain": $.rain.'3h' default "Nil",
+	"snow": $.snow default "Nil"
+	}}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="End Flow" doc:id="7fff23d0-6814-49ac-9ed8-8209415dcacd" message="Weather response successfully sent"/>       
+    </flow>
+</mule>

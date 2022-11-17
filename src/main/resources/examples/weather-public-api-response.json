@@ -1,0 +1,46 @@
+{
+  "coord": {
+    "lon": 11.5331,
+    "lat": 48.1823
+  },
+  "weather": [
+    {
+      "id": 801,
+      "main": "Clouds",
+      "description": "few clouds",
+      "icon": "02d"
+    }
+  ],
+  "base": "stations",
+  "main": {
+    "temp": 286.11,
+    "feels_like": 285.16,
+    "temp_min": 283.46,
+    "temp_max": 287.52,
+    "pressure": 1010,
+    "humidity": 65,
+    "sea_level": 1010,
+    "grnd_level": 950
+  },
+  "visibility": 10000,
+  "wind": {
+    "speed": 0.92,
+    "deg": 63,
+    "gust": 0.99
+  },
+  "clouds": {
+    "all": 15
+  },
+  "dt": 1668523317,
+  "sys": {
+    "type": 2,
+    "id": 2002112,
+    "country": "DE",
+    "sunrise": 1668493232,
+    "sunset": 1668526593
+  },
+  "timezone": 3600,
+  "id": 2886148,
+  "name": "Kolonie Lerchenau",
+  "cod": 200
+}

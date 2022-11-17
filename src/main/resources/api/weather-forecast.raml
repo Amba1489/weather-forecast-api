@@ -1,0 +1,51 @@
+#%RAML 1.0
+types:
+  NewDataType:
+    type: object
+securitySchemes:
+  SecurityScheme:
+    type: Basic Authentication
+title: weather-api
+baseUri: baseUri.com
+description: Current weather conditions and a 5-day forecast (3-hour increments) are at your fingertips, no matter where you are on Earth. This API gathers and processes data on the weather from a variety of publicly available sources, that in return collects data from global and local weather models, satellites, radars, and a massive network of weather stations. Data is available in JSON or HTML tabular format.
+mediaType:
+  - application/json
+version: "1.0"
+protocols:
+  - HTTP
+/weather:
+  get:
+    displayName: weather forecast
+    description: This endpoint should provide the current weather and projected forecast for location provided by an address as well as geo location coordinates (longitude/latitude)
+    queryParameters:
+      lat?:
+        description: Geographical coordinates (latitude)
+        example: 1
+        type: number
+        format: int
+      lon?:
+        description: Geographical coordinates (longitude)
+        example: 1
+        type: number
+        format: int
+      q?:
+        description: q can hold city name, state code and country code divided by comma, use ISO 3166 country codes.
+        default: Munich
+        example: Example
+        type: string
+      mode?:
+        description: Response mode could be json/html(Tabular form).
+        default: json
+        example: Example
+        type: string  
+    responses:
+      "200":
+        body:
+          application/json:
+            example: !include weather-api-response.json
+            type: object
+          text/html:
+            example: !include weather-forcast-response.html
+            
+securedBy:
+  - SecurityScheme

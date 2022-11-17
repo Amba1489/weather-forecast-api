@@ -1,0 +1,114 @@
+<html>
+    <head>
+    <!-- Style sheet for the table-->
+    <style>
+		table {
+		  font-family: arial, sans-serif;
+		  border-collapse: collapse;
+		  width: 100%;
+		}
+		
+		caption { 
+		  display: table-caption;
+		  text-align: center;
+		  color: blue;
+		  font-weight: bold
+		}
+
+		td, th {
+		  border: 1px solid #dddddd;
+		  text-align: left;
+		  padding: 8px;
+		}
+
+		tr:nth-child(even) {
+		  background-color: #dddddd;
+		}
+	</style>
+    </head>
+	<body>
+	<!-- Todays Weather-->
+	<table border="2">
+	      <caption>
+             Todays weather
+          </caption>
+			<thead>
+				<tr>
+					<th>Today's Date</th>
+					<th>Weather</th>
+					<th>Temperature (C)</th>
+					<th>Feels like (C)</th>
+					<th>Temperature Minimum (C)</th>
+					<th>Temperature Maximum (C)</th>
+					<th>Atmospheric pressure</th>
+					<th>Humidity %</th>
+					<th>Sunrise</th>
+					<th>Sunset</th>
+					<th>Timezone</th>
+					<th>Wind (mps)</th>
+					<th>Clouds %</th>
+					<th>Rain</th>
+				</tr>
+			</thead>
+			<tbody>			
+#[%dw 2.0
+output application/java
+---
+	"<tr><td><span>" ++ (((payload[1].typedValue.dt as DateTime) as String {format: 'yyyy-MM-dd'}) default "") ++ "</span></td><td><span>"
+	++ (payload[1].typedValue.weather[0].main default "") ++ "</span></td><td><span>"
+	++ (payload[1].typedValue.main.temp default "") ++ "</span></td><td><span>"
+	++ (payload[1].typedValue.main.feels_like) ++ "</span></td><td><span>"
+	++ (payload[1].typedValue.main.temp_min default "") ++ "</span></td><td><span>"
+	++ (payload[1].typedValue.main.temp_max default "") ++ "</span></td><td><span>"
+	++ (payload[1].typedValue.main.pressure default "") ++ "</span></td><td><span>"
+	++ (payload[1].typedValue.main.humidity default "") ++ "</span></td><td><span>"
+	++ (((payload[1].typedValue.sys.sunrise as DateTime) as String {format: 'hh:mm:ss'})) ++ "</span></td><td><span>"
+	++ (((payload[1].typedValue.sys.sunset as DateTime) as String {format: 'hh:mm:ss'})) ++ "</span></td><td><span>"
+	++ ((payload[1].typedValue.timezone/3600) as String {format:"00.00"}) ++ "</span></td><td><span>"
+	++ (payload[1].typedValue.wind.speed default "") ++ "</span></td><td><span>"
+	++ (payload[1].typedValue.clouds.all default "") ++ "</span></td><td><span>"
+	++ (payload[1].typedValue.rain.'3h' default "Nil") ++ "</span></td><td><span>"]
+			</tbody>
+		</table>
+		<br/>
+		<!-- Forcasted Weather-->
+		<table border="2">
+		  <caption>
+             A summary of the forcasted weather for 5 days every 3 hr
+          </caption>
+			<thead>
+				<tr>
+					<th>Forcasted Date</th>
+					<th>Weather</th>
+					<th>Temperature (C)</th>
+					<th>Feels like</th>
+					<th>Temperature Minimum (C)</th>
+					<th>Temperature Maximum (C)</th>
+					<th>Atmospheric pressure</th>
+					<th>Humidity</th>
+					<th>Wind</th>
+					<th>Clouds %</th>
+					<th>Rain</th>
+				</tr>
+			</thead>
+			<tbody>			
+#[%dw 2.0
+output application/java
+---
+payload[0].typedValue.list map ((item) ->
+	"<tr><td><span>" ++ (((item.dt as DateTime) as String {format: 'yyyy-MM-dd hh:mm'}) default "") ++ "</span></td><td><span>"
+	++ (item.weather[0].main default "") ++ "</span></td><td><span>"
+	++ (item.main.temp default "") ++ "</span></td><td><span>"
+	++ (item.main.feels_like) ++ "</span></td><td><span>"
+	++ (item.main.temp_min default "") ++ "</span></td><td><span>"
+	++ (item.main.temp_max default "") ++ "</span></td><td><span>"
+	++ (item.main.pressure default "") ++ "</span></td><td><span>"
+	++ (item.main.humidity default "") ++ "</span></td><td><span>"
+	++ (item.wind.speed default "") ++ "</span></td><td><span>"
+	++ (item.clouds.all default "") ++ "</span></td><td><span>"
+	++ (item.rain.'3h' default "Nil") ++ "</span></td><td><span>")
+	joinBy ""]
+			</tbody>
+		</table>
+	</body>
+</html>

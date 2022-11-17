@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="weather-forecast-suite.xml" />
+	<munit:test name="demo-weather-forecast-error-suiteTest" doc:id="9b284206-abf5-4094-b8be-35bb71f2a2d5" expectedErrorType="APIKIT:BAD_REQUEST">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when APIKIT:BAD_REQUEST" doc:id="1187e472-4caf-4c68-8880-4e6117d57e4a" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="weather-forecast-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:BAD_REQUEST" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow Reference" doc:id="d88a4f1e-ceeb-4e1e-a7f7-89ff460a5545" name="weather-forecast-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="baa624e5-e8ab-43f4-aab1-498e6e358150" expected="#[400]" actual="#[vars.httpStatus]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="demo-weather-forecast-error-suiteTest1" doc:id="66a76b82-cfaa-4109-8430-58be8bd3e496" expectedErrorType="APIKIT:NOT_FOUND" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when APIKIT:NOT_FOUND" doc:id="0042cc7f-52ca-497e-b8dc-84a62e795aec" processor="apikit:router" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="weather-forecast-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:NOT_FOUND" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow Reference" doc:id="fae00215-eec1-4e72-a6ec-04f041b0fa22" name="weather-forecast-main" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="36fbe6b5-4f06-4e93-9790-afa757b6343e" actual="#[vars.httpStatus]" expected="#[400]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="get:\weather:weather-forecast-config-html-test" doc:id="620742a7-0535-4fe6-97cb-fdf319b23b14" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Fetch Todays weather" doc:id="4e77d251-c5c4-4aea-ac40-5831340bd227" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="df2b6780-8e74-400d-a7c5-80aba8f973c8" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json  --- readUrl('classpath://getweatherweatherforecastconfightmltest/mock_payload.dwl')]" mediaType="application/json " encoding="UTF-8" />
+					<munit-tools:attributes value="#[readUrl('classpath://getweatherweatherforecastconfightmltest/mock_attributes.dwl')]" />
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://getweatherweatherforecastconfightmltest/mock_variable_.dwl')]" />
+						<munit-tools:variable key="Mode" value="#[output application/java --- readUrl('classpath://getweatherweatherforecastconfightmltest/mock_variable_1.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock Fetch forecasted weather" doc:id="8160fed8-bb18-4303-967f-059f531351a7" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="81a3d8fb-d913-4aff-bfe9-2879cc0515c7" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json  --- readUrl('classpath://getweatherweatherforecastconfightmltest/mock_payload1.dwl')]" mediaType="application/json " encoding="UTF-8" />
+					<munit-tools:attributes value="#[readUrl('classpath://getweatherweatherforecastconfightmltest/mock_attributes1.dwl')]" />
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://getweatherweatherforecastconfightmltest/mock_variable_2.dwl')]" />
+						<munit-tools:variable key="Mode" value="#[output application/java --- readUrl('classpath://getweatherweatherforecastconfightmltest/mock_variable_3.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="53d1a9aa-fccb-4735-b371-71de04e15972" >
+				<munit:payload value="#[readUrl('classpath://getweatherweatherforecastconfightmltest/set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://getweatherweatherforecastconfightmltest/set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://getweatherweatherforecastconfightmltest/set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to get:\weather:weather-forecast-config" doc:id="bf958df4-3762-48cf-87a6-b2a76d0540ab" name="get:\weather:weather-forecast-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="81635d4c-c0f4-4d6e-96de-75ab78c0aebb" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import getweatherweatherforecastconfightmltest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Convert to Html" doc:id="12d2688c-9d7b-4145-b470-e2f725d14fdf" processor="parse-template" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="adb0398a-dae0-4798-b10a-b0ee2a083075" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="get:\weather:weather-forecast-config-test" doc:id="fb13dfe5-f42a-4cdb-b23c-87e29eb2827f" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Fetch Todays weather" doc:id="8b89fa62-c4b1-46f3-abb8-fe60f92600a8" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="df2b6780-8e74-400d-a7c5-80aba8f973c8" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json  --- readUrl('classpath://getweatherweatherforecastconfigtest/mock_payload.dwl')]" mediaType="application/json " encoding="UTF-8" />
+					<munit-tools:attributes value="#[readUrl('classpath://getweatherweatherforecastconfigtest/mock_attributes.dwl')]" />
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://getweatherweatherforecastconfigtest/mock_variable_.dwl')]" />
+						<munit-tools:variable key="Mode" value="#[output application/java --- readUrl('classpath://getweatherweatherforecastconfigtest/mock_variable_1.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock Fetch forecasted weather" doc:id="9e7c25f8-14dc-4d37-b28c-7ee7a8596bf4" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="81a3d8fb-d913-4aff-bfe9-2879cc0515c7" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json  --- readUrl('classpath://getweatherweatherforecastconfigtest/mock_payload1.dwl')]" mediaType="application/json " encoding="UTF-8" />
+					<munit-tools:attributes value="#[readUrl('classpath://getweatherweatherforecastconfigtest/mock_attributes1.dwl')]" />
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://getweatherweatherforecastconfigtest/mock_variable_2.dwl')]" />
+						<munit-tools:variable key="Mode" value="#[output application/java --- readUrl('classpath://getweatherweatherforecastconfigtest/mock_variable_3.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="c5e357f5-b86f-4161-9469-df5c542d143f" >
+				<munit:payload value="#[readUrl('classpath://getweatherweatherforecastconfigtest/set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://getweatherweatherforecastconfigtest/set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://getweatherweatherforecastconfigtest/set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to get:\weather:weather-forecast-config" doc:id="32b49574-fb0a-4415-b383-41fca340769a" name="get:\weather:weather-forecast-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="1f42fb0d-9558-4df2-8dea-890d0bf52d66" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import getweatherweatherforecastconfigtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Convert to Json" doc:id="c22cd934-a45f-4c08-b746-877d51853c21" processor="ee:transform" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="e32941e3-0786-43df-9ce4-90af54995885" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="weather-forecast-main-test" doc:id="31375203-da1b-43b0-a9b8-0e5fd03361c5" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock APIkit Router" doc:id="40b128ef-0221-4aed-a797-2dda95893a2c" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="2c71c2cb-6263-4ba3-aade-f9ea50ee77e3" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json  --- readUrl('classpath://weatherforecastmaintest/mock_payload.dwl')]" mediaType="application/json " encoding="UTF-8" />
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://weatherforecastmaintest/mock_variable_.dwl')]" />
+						<munit-tools:variable key="httpStatus" value="#[readUrl('classpath://weatherforecastmaintest/mock_variable_1.dwl')]" />
+						<munit-tools:variable key="Mode" value="#[output application/java --- readUrl('classpath://weatherforecastmaintest/mock_variable_2.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="f80221a2-e984-4687-939c-6a483203414e" >
+				<munit:payload value="#[readUrl('classpath://weatherforecastmaintest/set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://weatherforecastmaintest/set-event_attributes.dwl')]" />
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to weather-forecast-main" doc:id="63810ace-74a6-4fcb-905d-096498261d42" name="weather-forecast-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="055930d7-16c7-4ac2-9cbe-8d086891a8bd" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import weatherforecastmaintest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+
+</mule>

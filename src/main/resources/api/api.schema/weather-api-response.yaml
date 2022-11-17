@@ -1,0 +1,34 @@
+Todays_weather:
+                  City Name: London
+                  Country: GB
+                  GeoCoordinates (Latitude | Longitude): 51.5085 | -0.1257
+                  Date: 2022-11-17
+                  Weather: Rain ,light rain
+                  Temperature: 8.73C
+                  Feels like: 4.83C
+                  Temperature Minimum: 8.06C
+                  Temperature Maximum: 9.59C
+                  Sunrise: 07:21:47 am
+                  Sunset: 04:09:22 pm
+                  Atmospheric pressure: 981
+                  Humidity: 94%
+                  Visibility: 10000
+                  Wind: 8.75mps in direction 250
+                  Clouds: 75 hpa
+                  Rain: null
+                  Snow: null
+Weather_forcast:
+                  -
+                    Date: 2022-11-1709:00:00
+                    Weather: Rain ,light rain
+                    Temperature: 8.74C
+                    Feels like: 5.2C
+                    Temperature Minimum: 8.74C
+                    Temperature Maximum: 9.62C
+                    Atmospheric pressure: 981
+                    Humidity: 94%
+                    Visibility: 10000
+                    Wind: 7.42mps in direction 269
+                    Clouds: 75 hpa
+                    Rain: 0.51
+                    Snow: null

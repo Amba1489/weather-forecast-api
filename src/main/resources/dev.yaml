@@ -1,0 +1,23 @@
+
+http:
+ port: "8081"
+ 
+anypoint:
+ platform:
+  client_id: "0ec308953a344b2b935d1167c6940838"
+  client_secret: "13C26ea765d041b39Ff27b006c5Da137"
+
+apiautodiscovery:
+ id: "18313132"
+
+api:
+ host: "api.openweathermap.org"
+ path: "/data/2.5/forecast"
+ id: "08672966aecc74279b0711390dd49c19"
+ unit: "metric"
+  
+api2:
+ path: "/data/2.5/weather"
+  
+timezone: "UTC+1"  
+  
