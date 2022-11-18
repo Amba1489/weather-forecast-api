@@ -1,0 +1,34 @@
+{
+	"info": {
+		"_postman_id": "f4f5c827-3827-42a2-934d-ce8161949d44",
+		"name": "weather-forcast",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "13966304"
+	},
+	"item": [
+		{
+			"name": "weather api",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Geolocation",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Postal code",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}
